@@ -1,469 +1,152 @@
-/* ==========================================================================
-   NORRLAND - ADOBE DATA LAYER
-   Simple Click Tracking Version
-   ========================================================================== */
+/* ============================================================
+   NORRLAND - SIMPLE ADOBE DATA LAYER CLICK TEST
+   ============================================================ */
+
+console.log("========================================");
+console.log("NORRLAND SCRIPT.JS STARTED");
+console.log("========================================");
 
 
-/* ==========================================================================
-   1. ADOBE DATA LAYER
-   ========================================================================== */
+/* ============================================================
+   ADOBE DATA LAYER
+   ============================================================ */
 
 window.adobeDataLayer = window.adobeDataLayer || [];
 
-
-/* ==========================================================================
-   2. PUSH EVENT TO ADOBE DATA LAYER
-   ========================================================================== */
-
-function pushAdobeDataLayer(data) {
-
-    console.log("====================================");
-    console.log("ADOBE DATA LAYER EVENT");
-    console.log(data);
-    console.log("====================================");
-
-    window.adobeDataLayer.push(data);
-
-}
+console.log(
+    "Adobe Data Layer:",
+    window.adobeDataLayer
+);
 
 
-/* ==========================================================================
-   3. PAGE DATA
-   ========================================================================== */
+/* ============================================================
+   CLICK TRACKING
+   ============================================================ */
 
-function getPageData() {
+document.addEventListener("click", function (event) {
 
-    return {
-
-        pageName: document.title || window.location.pathname,
-
-        pageURL: window.location.href,
-
-        pagePath: window.location.pathname,
-
-        pageTitle: document.title
-
-    };
-
-}
+    console.log("----------------------------------------");
+    console.log("CLICK DETECTED");
+    console.log("Clicked element:", event.target);
 
 
-/* ==========================================================================
-   4. BUTTON / CTA CLICK
-   ========================================================================== */
+    /* Find button, link or CTA */
 
-function trackButtonClick(button) {
+    var element = event.target.closest(
+        "button, a, .btn, .card__btn"
+    );
 
-    if (!button) {
+
+    console.log(
+        "Trackable element:",
+        element
+    );
+
+
+    if (!element) {
+
+        console.log(
+            "No button/link/CTA found"
+        );
 
         return;
-
     }
 
 
-    var text =
-        (button.innerText ||
-         button.textContent ||
-         "").trim();
+    /* ========================================================
+       CLICK INFORMATION
+       ======================================================== */
+
+    var clickText =
+        (
+            element.innerText ||
+            element.textContent ||
+            ""
+        ).trim();
 
 
-    var id =
-        button.id || "";
+    var clickId =
+        element.id || "";
 
 
-    var classes =
-        typeof button.className === "string"
-            ? button.className
+    var clickClass =
+        typeof element.className === "string"
+            ? element.className
             : "";
 
 
-    var href =
-        button.getAttribute("href") || "";
+    var clickURL =
+        element.href ||
+        element.getAttribute("href") ||
+        "";
 
 
-    var productId =
-        button.getAttribute("data-product-id") || "";
+    /* ========================================================
+       DATA LAYER EVENT
+       ======================================================== */
 
-
-    var productName =
-        button.getAttribute("data-product-name") || "";
-
-
-    var productPrice =
-        button.getAttribute("data-product-price") || "";
-
-
-    var productCategory =
-        button.getAttribute("data-product-category") || "";
-
-
-    /* ------------------------------------------------------------------
-       BUTTON CLICK
-       ------------------------------------------------------------------ */
-
-    pushAdobeDataLayer({
+    var data = {
 
         event: "buttonClick",
 
         click: {
 
-            clickText: text,
+            clickText: clickText,
 
-            clickId: id,
+            clickId: clickId,
 
-            clickClass: classes,
+            clickClass: clickClass,
 
-            clickURL: href
-
-        },
-
-        page: getPageData(),
-
-        product: productId
-            ? {
-
-                productID: productId,
-
-                productName: productName,
-
-                price: productPrice
-                    ? Number(productPrice)
-                    : "",
-
-                category: productCategory
-
-            }
-            : null
-
-    });
-
-
-    /* ------------------------------------------------------------------
-       CTA CLICK
-       ------------------------------------------------------------------ */
-
-    if (
-
-        button.classList.contains("btn") ||
-
-        button.classList.contains("card__btn")
-
-    ) {
-
-        pushAdobeDataLayer({
-
-            event: "ctaClick",
-
-            cta: {
-
-                ctaText: text,
-
-                ctaURL: href,
-
-                ctaID: id,
-
-                ctaClass: classes
-
-            },
-
-            page: getPageData(),
-
-            product: productId
-                ? {
-
-                    productID: productId,
-
-                    productName: productName,
-
-                    price: productPrice
-                        ? Number(productPrice)
-                        : "",
-
-                    category: productCategory
-
-                }
-                : null
-
-        });
-
-    }
-
-}
-
-
-/* ==========================================================================
-   5. LINK CLICK
-   ========================================================================== */
-
-function trackLinkClick(link) {
-
-    if (!link) {
-
-        return;
-
-    }
-
-
-    var text =
-        (link.innerText ||
-         link.textContent ||
-         "").trim();
-
-
-    var id =
-        link.id || "";
-
-
-    var classes =
-        typeof link.className === "string"
-            ? link.className
-            : "";
-
-
-    var href =
-        link.href || "";
-
-
-    pushAdobeDataLayer({
-
-        event: "linkClick",
-
-        click: {
-
-            clickText: text,
-
-            clickURL: href,
-
-            clickId: id,
-
-            clickClass: classes
+            clickURL: clickURL
 
         },
 
-        page: getPageData()
+        page: {
 
-    });
+            pageName: document.title,
 
-}
+            pageURL: window.location.href,
 
-
-/* ==========================================================================
-   6. PRODUCT CARD CLICK
-   ========================================================================== */
-
-function trackProductClick(card) {
-
-    if (!card) {
-
-        return;
-
-    }
-
-
-    var productId =
-        card.getAttribute("data-id") || "";
-
-
-    var productName =
-        card.getAttribute("data-product-name") || "";
-
-
-    var productPrice =
-        card.getAttribute("data-product-price") || "";
-
-
-    var productCategory =
-        card.getAttribute("data-product-category") || "";
-
-
-    /* ------------------------------------------------------------------
-       PRODUCT CLICK
-       ------------------------------------------------------------------ */
-
-    pushAdobeDataLayer({
-
-        event: "productClick",
-
-        product: {
-
-            productID: productId,
-
-            productName: productName,
-
-            category: productCategory,
-
-            price: productPrice
-                ? Number(productPrice)
-                : ""
-
-        },
-
-        page: getPageData()
-
-    });
-
-}
-
-
-/* ==========================================================================
-   7. GLOBAL CLICK TRACKING
-   ========================================================================== */
-
-document.addEventListener(
-
-    "click",
-
-    function(event) {
-
-
-        /* --------------------------------------------------------------
-           DEBUG
-           -------------------------------------------------------------- */
-
-        console.log("CLICK DETECTED");
-
-        console.log("Clicked Element:");
-
-        console.log(event.target);
-
-
-        /* --------------------------------------------------------------
-           FIND CLICKED ELEMENT
-           -------------------------------------------------------------- */
-
-        var element =
-            event.target.closest(
-                "a, button, .btn, .card__btn"
-            );
-
-
-        console.log("Tracking Element:");
-
-        console.log(element);
-
-
-        if (!element) {
-
-            console.log(
-                "No trackable element found."
-            );
-
-            return;
+            pagePath: window.location.pathname
 
         }
 
-
-        /* ==============================================================
-           BUTTON
-           ============================================================== */
-
-        if (
-
-            element.tagName === "BUTTON"
-
-        ) {
-
-            console.log(
-                "BUTTON CLICK"
-            );
+    };
 
 
-            trackButtonClick(element);
-
-        }
-
-
-        /* ==============================================================
-           CTA CLASS
-           ============================================================== */
-
-        else if (
-
-            element.classList.contains("btn") ||
-
-            element.classList.contains("card__btn")
-
-        ) {
-
-            console.log(
-                "CTA CLICK"
-            );
+    console.log(
+        "PUSHING EVENT:",
+        data
+    );
 
 
-            trackButtonClick(element);
+    /* ========================================================
+       PUSH TO ADOBE DATA LAYER
+       ======================================================== */
 
-        }
-
-
-        /* ==============================================================
-           LINK
-           ============================================================== */
-
-        else if (
-
-            element.tagName === "A"
-
-        ) {
-
-            console.log(
-                "LINK CLICK"
-            );
+    window.adobeDataLayer.push(data);
 
 
-            trackLinkClick(element);
-
-        }
-
-
-        /* ==============================================================
-           PRODUCT CARD
-           ============================================================== */
-
-        var card =
-            element.closest(
-                ".card[data-id]"
-            );
+    console.log(
+        "EVENT PUSHED SUCCESSFULLY"
+    );
 
 
-        if (
-
-            card &&
-
-            !element.classList.contains("card__btn") &&
-
-            !element.classList.contains("btn")
-
-        ) {
-
-            console.log(
-                "PRODUCT CARD CLICK"
-            );
+    console.log(
+        "Adobe Data Layer:",
+        window.adobeDataLayer
+    );
 
 
-            trackProductClick(card);
+    console.log("----------------------------------------");
 
-        }
-
-
-    },
-
-    false
-
-);
+});
 
 
-/* ==========================================================================
-   8. SCRIPT LOADED MESSAGE
-   ========================================================================== */
+/* ============================================================
+   SCRIPT LOADED
+   ============================================================ */
 
-console.log(
-    "================================================"
-);
-
-console.log(
-    "NORRLAND ADOBE DATA LAYER SCRIPT LOADED"
-);
-
-console.log(
-    "================================================"
-);
+console.log("========================================");
+console.log("NORRLAND SCRIPT.JS LOADED SUCCESSFULLY");
+console.log("========================================");
