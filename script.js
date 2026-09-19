@@ -1,146 +1,66 @@
-```javascript
-/* =========================================================
-   NORRLAND - Adobe Data Layer
-   Final Click Tracking
-   ========================================================= */
+console.log("SCRIPT.JS LOADED");
 
-(function () {
+window.adobeDataLayer = window.adobeDataLayer || [];
 
-    console.log("SCRIPT.JS LOADED");
+window.addEventListener("click", function (event) {
 
-    /* -----------------------------------------------------
-       Create Adobe Data Layer
-       ----------------------------------------------------- */
+    console.log("CLICK DETECTED");
+    console.log("TARGET:", event.target);
 
-    window.adobeDataLayer = window.adobeDataLayer || [];
+    var element = event.target;
 
+    while (
+        element &&
+        element !== document &&
+        element.tagName !== "A" &&
+        element.tagName !== "BUTTON"
+    ) {
+        element = element.parentElement;
+    }
 
-    /* -----------------------------------------------------
-       Click Tracking
-       Uses capture phase so clicks are detected even when
-       another script handles/stops the click later.
-       ----------------------------------------------------- */
+    if (!element || element === document) {
+        console.log("NOT A LINK OR BUTTON");
+        return;
+    }
 
-    window.addEventListener(
-        "click",
-        function (event) {
+    var clickText = (
+        element.innerText ||
+        element.textContent ||
+        ""
+    ).trim();
 
-            console.log("CLICK DETECTED");
+    var clickId = element.id || "";
 
-            var element = event.target;
+    var clickClass =
+        typeof element.className === "string"
+            ? element.className
+            : "";
 
-            /* Find nearest clickable element */
-            while (
-                element &&
-                element !== document &&
-                element.tagName !== "A" &&
-                element.tagName !== "BUTTON"
-            ) {
-                element = element.parentElement;
-            }
+    var clickURL = element.href || "";
 
-            if (!element || element === document) {
-                console.log("Clicked element is not a link/button");
-                return;
-            }
+    var data = {
+        event: "buttonClick",
 
-
-            /* -------------------------------------------------
-               Get click details
-               ------------------------------------------------- */
-
-            var clickText =
-                (element.innerText || element.textContent || "")
-                    .trim();
-
-            var clickId =
-                element.id || "";
-
-            var clickClass =
-                typeof element.className === "string"
-                    ? element.className
-                    : "";
-
-            var clickURL =
-                element.href || "";
-
-
-            /* -------------------------------------------------
-               Determine click type
-               ------------------------------------------------- */
-
-            var clickType = "link";
-
-            if (
-                element.tagName.toLowerCase() === "button" ||
-                element.classList.contains("btn")
-            ) {
-                clickType = "button";
-            }
-
-
-            /* -------------------------------------------------
-               Push event to Adobe Data Layer
-               ------------------------------------------------- */
-
-            var dataLayerEvent = {
-
-                event: "buttonClick",
-
-                click: {
-
-                    clickText: clickText,
-
-                    clickId: clickId,
-
-                    clickClass: clickClass,
-
-                    clickURL: clickURL,
-
-                    clickType: clickType
-
-                },
-
-                page: {
-
-                    pageName: document.title,
-
-                    pageURL: window.location.href,
-
-                    pagePath: window.location.pathname
-
-                }
-
-            };
-
-
-            window.adobeDataLayer.push(dataLayerEvent);
-
-
-            /* -------------------------------------------------
-               Console validation
-               ------------------------------------------------- */
-
-            console.log("ADOBE DATALAYER EVENT PUSHED");
-
-            console.log(dataLayerEvent);
-
-            console.log(
-                "Current Adobe Data Layer:",
-                window.adobeDataLayer
-            );
-
+        click: {
+            clickText: clickText,
+            clickId: clickId,
+            clickClass: clickClass,
+            clickURL: clickURL
         },
 
-        true
-    );
+        page: {
+            pageName: document.title,
+            pageURL: window.location.href,
+            pagePath: window.location.pathname
+        }
+    };
 
+    window.adobeDataLayer.push(data);
 
-    /* -----------------------------------------------------
-       Confirm listener is installed
-       ----------------------------------------------------- */
+    console.log("ADOBE DATALAYER EVENT PUSHED");
+    console.log(data);
+    console.log(window.adobeDataLayer);
 
-    console.log("CLICK TRACKING INITIALIZED");
+}, true);
 
-})();
-```
+console.log("CLICK TRACKING INITIALIZED");
