@@ -1,45 +1,102 @@
+/* =========================================================
+   NORRLAND - ADOBE DATA LAYER CLICK TRACKING
+   ========================================================= */
+
 console.log("SCRIPT.JS LOADED");
 
 window.adobeDataLayer = window.adobeDataLayer || [];
 
-window.addEventListener("DOMContentLoaded", function () {
 
-    console.log("DOM LOADED");
+/* =========================================================
+   CLICK TRACKING
+   ========================================================= */
 
-    var shopNow = document.querySelector('a.btn[href="products.html"]');
+document.addEventListener("click", function (event) {
 
-    console.log("SHOP NOW ELEMENT:", shopNow);
+    console.log("CLICK EVENT FIRED");
+    console.log("Clicked element:", event.target);
 
-    if (!shopNow) {
-        console.log("SHOP NOW NOT FOUND");
+
+    /* -----------------------------------------------------
+       Find the clicked CTA/button/link
+       ----------------------------------------------------- */
+
+    var element = event.target.closest("a, button");
+
+
+    if (!element) {
+        console.log("Not a button or link");
         return;
     }
 
-    shopNow.addEventListener("click", function () {
 
-        console.log("SHOP NOW CLICKED");
+    console.log("CLICKABLE ELEMENT:", element);
 
-        window.adobeDataLayer.push({
-            event: "buttonClick",
 
-            click: {
-                clickText: this.textContent.trim(),
-                clickId: this.id || "",
-                clickClass: this.className || "",
-                clickURL: this.href || ""
-            },
+    /* -----------------------------------------------------
+       Get click information
+       ----------------------------------------------------- */
 
-            page: {
-                pageName: document.title,
-                pageURL: window.location.href,
-                pagePath: window.location.pathname
-            }
-        });
+    var clickText = element.textContent
+        ? element.textContent.trim()
+        : "";
 
-        console.log(
-            "DATALAYER AFTER CLICK:",
-            window.adobeDataLayer
-        );
+    var clickId = element.id || "";
+
+    var clickClass = element.className || "";
+
+    var clickURL = element.href || "";
+
+
+    /* -----------------------------------------------------
+       Push to Adobe Data Layer
+       ----------------------------------------------------- */
+
+    window.adobeDataLayer.push({
+
+        event: "buttonClick",
+
+        click: {
+
+            clickText: clickText,
+
+            clickId: clickId,
+
+            clickClass: clickClass,
+
+            clickURL: clickURL
+
+        },
+
+        page: {
+
+            pageName: document.title,
+
+            pageURL: window.location.href,
+
+            pagePath: window.location.pathname
+
+        }
+
     });
+
+
+    /* -----------------------------------------------------
+       Console validation
+       ----------------------------------------------------- */
+
+    console.log("BUTTON CLICK TRACKED");
+
+    console.log({
+        clickText: clickText,
+        clickId: clickId,
+        clickClass: clickClass,
+        clickURL: clickURL
+    });
+
+    console.log(
+        "ADOBE DATA LAYER:",
+        window.adobeDataLayer
+    );
 
 });
