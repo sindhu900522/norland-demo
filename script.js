@@ -1,115 +1,45 @@
-/* ============================================================
-   NORRLAND - CLICK TRACKING
-   ============================================================ */
-
 console.log("SCRIPT.JS LOADED");
 
 window.adobeDataLayer = window.adobeDataLayer || [];
 
+window.addEventListener("DOMContentLoaded", function () {
 
-/* ============================================================
-   CLICK LISTENER
-   ============================================================ */
+    console.log("DOM LOADED");
 
-document.addEventListener("click", function (event) {
+    var shopNow = document.querySelector('a.btn[href="products.html"]');
 
-    console.log("CLICK WORKED");
-    console.log("Clicked element:", event.target);
+    console.log("SHOP NOW ELEMENT:", shopNow);
 
-
-    /* Find the actual link/button */
-
-    var element = event.target.closest("a, button, .btn");
-
-    console.log("Tracking element:", element);
-
-
-    if (!element) {
-
-        console.log("No trackable element");
-
+    if (!shopNow) {
+        console.log("SHOP NOW NOT FOUND");
         return;
-
     }
 
+    shopNow.addEventListener("click", function () {
 
-    /* ========================================================
-       GET CLICK DATA
-       ======================================================== */
+        console.log("SHOP NOW CLICKED");
 
-    var clickText =
-        (
-            element.innerText ||
-            element.textContent ||
-            ""
-        ).trim();
+        window.adobeDataLayer.push({
+            event: "buttonClick",
 
+            click: {
+                clickText: this.textContent.trim(),
+                clickId: this.id || "",
+                clickClass: this.className || "",
+                clickURL: this.href || ""
+            },
 
-    var clickId =
-        element.id || "";
+            page: {
+                pageName: document.title,
+                pageURL: window.location.href,
+                pagePath: window.location.pathname
+            }
+        });
 
-
-    var clickClass =
-        typeof element.className === "string"
-            ? element.className
-            : "";
-
-
-    var clickURL =
-        element.href ||
-        element.getAttribute("href") ||
-        "";
-
-
-    /* ========================================================
-       CREATE EVENT
-       ======================================================== */
-
-    var eventData = {
-
-        event: "buttonClick",
-
-        click: {
-
-            clickText: clickText,
-
-            clickId: clickId,
-
-            clickClass: clickClass,
-
-            clickURL: clickURL
-
-        },
-
-        page: {
-
-            pageName: document.title,
-
-            pageURL: window.location.href,
-
-            pagePath: window.location.pathname
-
-        }
-
-    };
-
-
-    console.log("EVENT CREATED:");
-    console.log(eventData);
-
-
-    /* ========================================================
-       PUSH TO ADOBE DATA LAYER
-       ======================================================== */
-
-    window.adobeDataLayer.push(eventData);
-
-
-    console.log("EVENT PUSHED");
-
-    console.log(
-        "DATA LAYER:",
-        window.adobeDataLayer
-    );
+        console.log(
+            "DATALAYER AFTER CLICK:",
+            window.adobeDataLayer
+        );
+    });
 
 });
