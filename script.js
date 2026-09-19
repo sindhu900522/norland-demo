@@ -117,38 +117,19 @@ function pushPageData() {
    2. GENERIC BUTTON CLICK
    ========================================================================== */
 
-function trackButtonClick(button) {
+function trackCTAClick(button) {
+    var ctaData = {
+        ctaText: button.textContent.trim(),
+        ctaURL: button.getAttribute("href") || "",
+        ctaID: button.id || "",
+        ctaClass: button.className || ""
+    };
 
-  if (!button) {
-    return;
-  }
-
-  var text =
-    (button.innerText || button.textContent || "").trim();
-
-  var href =
-    button.getAttribute("href") || "";
-
-  var id =
-    button.id || "";
-
-  var classes =
-    typeof button.className === "string"
-      ? button.className
-      : "";
-
-  var productId =
-    button.getAttribute("data-product-id") || "";
-
-  var productName =
-    button.getAttribute("data-product-name") || "";
-
-  var productPrice =
-    button.getAttribute("data-product-price") || "";
-
-  var productCategory =
-    button.getAttribute("data-product-category") || "";
-
+    pushAdobeDataLayer({
+        event: "ctaClick",
+        cta: ctaData
+    });
+}
 
   pushAdobeDataLayer({
 
@@ -1555,24 +1536,29 @@ function toggleNav() {
    GLOBAL CLICK TRACKING
    ========================================================================== */
 
-document.addEventListener(
-  "click",
-  function(event) {
+document.addEventListener("click", function(event) {
 
-    var button =
-      event.target.closest(
-        "button"
-      );
+    var element = event.target.closest("a, button");
 
-    var link =
-      event.target.closest(
-        "a"
-      );
+    if (!element) {
+        return;
+    }
 
-    var card =
-      event.target.closest(
-        ".card[data-id]"
-      );
+    // CTA tracking
+    if (element.classList.contains("btn")) {
+        trackCTAClick(element);
+    }
+
+    // Existing button tracking
+    if (element.tagName === "BUTTON") {
+        trackButtonClick(element);
+    }
+
+    // Existing link tracking
+    if (element.tagName === "A") {
+        trackLinkClick(element);
+    }
+});
 
 
     /* -----------------------------------
