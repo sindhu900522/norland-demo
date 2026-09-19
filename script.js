@@ -1,152 +1,56 @@
-/* ============================================================
-   NORRLAND - SIMPLE ADOBE DATA LAYER CLICK TEST
-   ============================================================ */
-
-console.log("========================================");
-console.log("NORRLAND SCRIPT.JS STARTED");
-console.log("========================================");
-
-
-/* ============================================================
-   ADOBE DATA LAYER
-   ============================================================ */
+console.log("SCRIPT.JS LOADED");
 
 window.adobeDataLayer = window.adobeDataLayer || [];
 
-console.log(
-    "Adobe Data Layer:",
-    window.adobeDataLayer
-);
-
-
-/* ============================================================
-   CLICK TRACKING
-   ============================================================ */
-
 document.addEventListener("click", function (event) {
 
-    console.log("----------------------------------------");
     console.log("CLICK DETECTED");
-    console.log("Clicked element:", event.target);
 
+    var element = event.target.closest("a, button, .btn");
 
-    /* Find button, link or CTA */
-
-    var element = event.target.closest(
-        "button, a, .btn, .card__btn"
-    );
-
-
-    console.log(
-        "Trackable element:",
-        element
-    );
-
+    console.log("ELEMENT:", element);
 
     if (!element) {
-
-        console.log(
-            "No button/link/CTA found"
-        );
-
         return;
     }
 
-
-    /* ========================================================
-       CLICK INFORMATION
-       ======================================================== */
-
-    var clickText =
-        (
-            element.innerText ||
-            element.textContent ||
-            ""
-        ).trim();
-
-
-    var clickId =
-        element.id || "";
-
-
-    var clickClass =
-        typeof element.className === "string"
-            ? element.className
-            : "";
-
-
-    var clickURL =
-        element.href ||
-        element.getAttribute("href") ||
-        "";
-
-
-    /* ========================================================
-       DATA LAYER EVENT
-       ======================================================== */
-
-    var data = {
-
+    var clickData = {
         event: "buttonClick",
 
         click: {
+            clickText: (
+                element.innerText ||
+                element.textContent ||
+                ""
+            ).trim(),
 
-            clickText: clickText,
+            clickId: element.id || "",
 
-            clickId: clickId,
+            clickClass:
+                typeof element.className === "string"
+                    ? element.className
+                    : "",
 
-            clickClass: clickClass,
-
-            clickURL: clickURL
-
+            clickURL:
+                element.href ||
+                element.getAttribute("href") ||
+                ""
         },
 
         page: {
-
             pageName: document.title,
 
-            pageURL: window.location.href,
-
-            pagePath: window.location.pathname
-
+            pageURL: window.location.href
         }
-
     };
 
+    console.log("PUSHING:", clickData);
+
+    window.adobeDataLayer.push(clickData);
 
     console.log(
-        "PUSHING EVENT:",
-        data
-    );
-
-
-    /* ========================================================
-       PUSH TO ADOBE DATA LAYER
-       ======================================================== */
-
-    window.adobeDataLayer.push(data);
-
-
-    console.log(
-        "EVENT PUSHED SUCCESSFULLY"
-    );
-
-
-    console.log(
-        "Adobe Data Layer:",
+        "DATA LAYER:",
         window.adobeDataLayer
     );
 
-
-    console.log("----------------------------------------");
-
 });
-
-
-/* ============================================================
-   SCRIPT LOADED
-   ============================================================ */
-
-console.log("========================================");
-console.log("NORRLAND SCRIPT.JS LOADED SUCCESSFULLY");
-console.log("========================================");
