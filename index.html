@@ -73,8 +73,52 @@
     </div>
   </footer>
 
-  
-  <script src="script.js"></script>
   <script src="products.js"></script>
+
+  <script>
+  console.log("INLINE SCRIPT STARTED");
+
+  window.adobeDataLayer = window.adobeDataLayer || [];
+
+  document.addEventListener("click", function(event) {
+
+      console.log("CLICK DETECTED:", event.target);
+
+      var element = event.target.closest("a, button");
+
+      if (!element) {
+          console.log("Not a button or link");
+          return;
+      }
+
+      console.log("TRACKING:", element);
+
+      window.adobeDataLayer.push({
+
+          event: "buttonClick",
+
+          click: {
+              clickText: (element.innerText || element.textContent || "").trim(),
+              clickId: element.id || "",
+              clickClass: element.className || "",
+              clickURL: element.href || ""
+          },
+
+          page: {
+              pageName: document.title,
+              pageURL: window.location.href
+          }
+
+      });
+
+      console.log(
+          "DATA LAYER AFTER CLICK:",
+          window.adobeDataLayer
+      );
+
+  });
+  </script>
+
+
 </body>
 </html>
