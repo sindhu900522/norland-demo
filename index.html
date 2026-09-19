@@ -12,7 +12,12 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<body>
 
+<script>
+alert("NORRLAND TEST");
+console.log("NORRLAND TEST - JAVASCRIPT IS RUNNING");
+</script>
   <!-- Navbar -->
   <header class="nav">
     <div class="nav__inner">
@@ -104,20 +109,67 @@
               clickURL: element.href || ""
           },
 
-          page: {
-              pageName: document.title,
-              pageURL: window.location.href
-          }
+           <script src="products.js"></script>
 
-      });
+  <script>
+    console.log("===== NORRLAND CLICK TRACKING STARTED =====");
+
+    window.adobeDataLayer = window.adobeDataLayer || [];
+
+    document.addEventListener("click", function (event) {
+
+      console.log("CLICK:", event.target);
+
+      var element = event.target.closest("a, button");
+
+      if (!element) {
+        return;
+      }
+
+      var clickText =
+        (element.innerText || element.textContent || "").trim();
+
+      var clickId =
+        element.id || "";
+
+      var clickClass =
+        typeof element.className === "string"
+          ? element.className
+          : "";
+
+      var clickURL =
+        element.href || "";
+
+      var data = {
+        event: "buttonClick",
+
+        click: {
+          clickText: clickText,
+          clickId: clickId,
+          clickClass: clickClass,
+          clickURL: clickURL
+        },
+
+        page: {
+          pageName: document.title,
+          pageURL: window.location.href
+        }
+      };
+
+      console.log("PUSHING EVENT:", data);
+
+      window.adobeDataLayer.push(data);
 
       console.log(
-          "DATA LAYER AFTER CLICK:",
-          window.adobeDataLayer
+        "DATA LAYER:",
+        window.adobeDataLayer
       );
 
-  });
+    });
+
   </script>
+
+
 
 
 </body>
